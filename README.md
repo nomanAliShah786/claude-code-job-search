@@ -1,6 +1,35 @@
-# CV & Job Application Workspace
+# Claude Code Job Search
+
+**Your AI job-hunting crew for Claude Code: find jobs, shortlist the best fits, and send a tailored, ATS-ready CV and cover letter for each one, without inventing a single fact.**
+
+[![Claude Code](https://img.shields.io/badge/built%20for-Claude%20Code-D97757)](https://claude.com/claude-code)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![LaTeX](https://img.shields.io/badge/CV-LaTeX-008080)](cv/master-template.example.tex)
+[![GitHub stars](https://img.shields.io/github/stars/nomanAliShah786/claude-code-job-search?style=social)](https://github.com/nomanAliShah786/claude-code-job-search/stargazers)
 
 *Built by Noman, your friendly neighbourhood **jobless** Spider-Man. 🕷️ Peter Parker at least had a job at the Daily Bugle. I had a job-hunting spreadsheet and too many browser tabs, so I built this project. If it lands you a job before it lands me one, please send pizza.*
+
+> ⭐ **If this saves you time, please star the repo.** It helps other job seekers find it, and it keeps me building.
+
+## What it does
+
+```
+/fetch-jobs   →   /rank-jobs   →   /job-intake   →   /tailor-cv   →   /cover-letter   →   /interview
+ 500+ fresh        best fits        gap analysis      2-page ATS CV     letter + review     prep pack
+ job ads           for you          for one job       for that job      before you send     + mock interview
+```
+
+- **Finds jobs for you:** collects the last 30 days of ads from LinkedIn, Indeed, IrishJobs.ie, Jobs.ie and Glassdoor, with duplicates removed.
+- **Ranks them honestly** against your real experience and your deal-breakers.
+- **Tailors your CV per job**, using the job's keywords, but only where your evidence backs them. Every number traces to a source you recorded, so nothing is invented.
+- **Checks every CV:** two pages at most, clean text for ATS parsers, a metric in every bullet, no repeated verbs.
+- **Covers the rest:** cover letters, an ATS score out of 100, application tracking, follow-ups and interview prep.
+
+<p align="center">
+  <a href="docs/sample-cv.pdf"><img src="docs/sample-cv-page1.png" alt="Sample CV page 1, for a fictional candidate" width="420"></a>
+  <a href="docs/sample-cv.pdf"><img src="docs/sample-cv-page2.png" alt="Sample CV page 2, for a fictional candidate" width="420"></a>
+  <br><em>A sample two-page CV built with this project (fictional candidate). <a href="docs/sample-cv.pdf">Open the PDF</a>.</em>
+</p>
 
 A LaTeX CV system plus a set of [Claude Code](https://claude.com/claude-code) skills that turn a job posting into a tailored, ATS-friendly CV of at most two pages, a cover letter, an application log, and interview prep. Every claim on a CV traces back to an evidence file you keep locally, so nothing is invented.
 
@@ -233,6 +262,12 @@ Remote Control lets you follow and answer a local Claude Code session from [clau
 4. Reply from your phone to continue, e.g. after solving a captcha on the computer.
 
 Allow phone notifications for the Claude app in your phone's settings. For a fully unattended run, start with `--permission-mode acceptEdits` or `auto` (see `claude remote-control --help`) so Claude doesn't wait on approval prompts.
+
+## Contributing
+
+Ideas, bug reports and new skills are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), then [open an issue](https://github.com/nomanAliShah786/claude-code-job-search/issues/new/choose). New in this release? See the [changelog](CHANGELOG.md).
+
+If this project helped you land an interview or a job, I'd love to hear about it. Open an issue with the **Success story** template. ⭐ Stars are appreciated too.
 
 ## Credits and licence
 

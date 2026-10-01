@@ -1,0 +1,207 @@
+%==============================================================
+%  Font  : Book Antiqua  -> Palatino clone (mathpazo / URW Palladio)
+%  Colour: pure black (#000000) throughout, as in the original
+%  Engine: pdfLaTeX  (compile straight on Overleaf)
+%  Role  : PUBLIC EXAMPLE of the master template. Copy it to cv/master-template.tex
+%           (gitignored) and replace the placeholders with your own CV.
+%==============================================================
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathpazo}              % Palatino = the closest free clone of Book Antiqua
+\usepackage[
+  a4paper,
+  top=0.60in, bottom=0.55in, left=0.485in, right=0.475in
+]{geometry}
+\usepackage{enumitem}
+\usepackage{paracol}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+
+% ATS: map every glyph to Unicode so parsers extract clean text
+\input{glyphtounicode}
+\pdfgentounicode=1
+\pdfinterwordspaceon               % write real spaces so parsers don't merge words
+
+% Word does not hyphenate: turn hyphenation off completely
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\righthyphenmin=62
+\tolerance=3000
+\emergencystretch=3em
+
+\definecolor{textblack}{HTML}{000000}   % the document's only colour
+\color{textblack}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedbottom
+
+%---------- body text metrics (Book Antiqua 10.6/13.1) ----------
+\newcommand{\bodyfont}{\fontsize{10.6}{13.1}\selectfont}
+\bodyfont
+
+%---------- the small black square bullet (▪) ----------
+\newcommand{\sqbullet}{\raisebox{0.42ex}{\rule{2.9pt}{2.9pt}}}
+
+%---------- Word-style small caps -------------------------------
+% Word renders "small caps" as: capitals at full size, the rest at ~79%.
+% \Cap{} marks the letters that stay at full size.
+\newcommand{\Cap}[1]{{\fontsize{12}{13}\selectfont #1}}
+\newcommand{\NameCap}[1]{{\fontsize{18}{20}\selectfont #1}}
+
+%---------- section heading: thin rule / small-caps title / thick rule ----------
+\newcommand{\rsection}[1]{%
+  \par\vspace{7pt}%
+  {\color{textblack}\hrule height 0.4pt}%
+  \vspace{3.5pt}%
+  \centerline{\bfseries\fontsize{9.5}{13}\selectfont\MakeUppercase{#1}}%
+  \vspace{2.5pt}%
+  {\color{textblack}\hrule height 1.5pt}%
+  \vspace{7pt}%
+  \bodyfont
+}
+
+%---------- job heading ----------
+\newcommand{\job}[3]{%
+  {\bfseries\fontsize{11}{13.2}\selectfont #1\par
+   #2\hfill #3\par}%
+  \vspace{4pt}\bodyfont
+}
+
+%---------- bullet list matching the original indents ----------
+\newlist{rbullets}{itemize}{1}
+\setlist[rbullets]{
+  label=\sqbullet,
+  labelindent=4.6pt,
+  labelwidth=4pt,
+  labelsep=14pt,
+  leftmargin=22.6pt,
+  itemindent=0pt,
+  topsep=4pt,
+  itemsep=4pt,
+  parsep=0pt,
+  partopsep=0pt
+}
+
+\newlist{skilllist}{itemize}{1}
+\setlist[skilllist]{
+  label=\sqbullet,
+  labelindent=5.8pt,
+  labelwidth=4pt,
+  labelsep=11pt,
+  leftmargin=20.8pt,
+  itemindent=0pt,
+  topsep=0pt,
+  itemsep=2.3pt,
+  parsep=0pt
+}
+
+% Fictional sample for the README. Alex Morgan and every company here are invented.
+\begin{document}
+\justifying
+\setlength{\parindent}{0pt}
+
+%==================== HEADER ====================
+\begin{center}
+  % Real spaces at the size switches shift the name, so it gets zero-width fake spaces instead
+  {\bfseries\fontsize{14.5}{20}\selectfont\pdfinterwordspaceoff\MakeUppercase{\NameCap{A}lex\pdffakespace{} \NameCap{M}organ}}\pdfinterwordspaceon
+\end{center}
+\vspace{-4pt}
+{\color{textblack}\hrule height 0.4pt}
+\vspace{4pt}
+\begin{center}
+  {\fontsize{10}{12}\selectfont +00 000 000 0000 \textbar{} alex.morgan@example.com \textbar{} Dublin, Ireland}
+\end{center}
+\vspace{-2pt}
+
+%==================== PROFESSIONAL SUMMARY ====================
+\rsection{\Cap{P}rofessional \Cap{S}ummary}
+{\fontsize{10.6}{15}\selectfont
+\frenchspacing
+Full Stack Software Engineer with 6+ years of experience building TypeScript, React and Node.js products on AWS for fintech and e-commerce teams. Strong in turning manual operations into reliable automation, designing clean APIs and shipping end to end with a focus on performance and testing. Most recently cut loan processing time by 70\% for 40,000+ monthly applications.\par}
+
+%==================== KEY SKILLS ====================
+\rsection{\Cap{K}ey \Cap{S}kills}
+\begin{paracol}{3}
+\begin{skilllist}
+\raggedright
+  \item TypeScript \& JavaScript
+  \item React \& Next.js
+  \item Node.js \& NestJS
+  \item REST \& GraphQL APIs
+  \item HTML, CSS \& Tailwind
+\end{skilllist}
+\switchcolumn
+\begin{skilllist}
+\raggedright
+  \item AWS Lambda \& ECS
+  \item CI/CD \& GitHub Actions
+  \item PostgreSQL \& MongoDB
+  \item Docker \& Terraform
+  \item Redis \& SQS
+\end{skilllist}
+\switchcolumn
+\begin{skilllist}
+\raggedright
+  \item System Design \& Code Review
+  \item Jest \& Playwright
+  \item RPA \& Web Automation
+  \item Agile, Scrum \& UAT
+  \item Git \& GitHub
+\end{skilllist}
+\end{paracol}
+
+%==================== PROFESSIONAL EXPERIENCE ====================
+\rsection{\Cap{P}rofessional \Cap{E}xperience}
+
+\job{NORTHWIND LENDING \textendash{} Dublin, Ireland}{Senior Full Stack Engineer}{Mar 2023 \textendash{} Present (2 yrs 8 mos)}
+A digital lender serving small businesses across Europe; joined as the fourth engineer to own the loan application platform.\par
+\begin{rbullets}
+  \item Automated \textbf{70\%} of manual underwriting checks with Node.js workflows, cutting decision time from 2 days to 4 hours.
+  \item Rebuilt the React application form for 40,000+ monthly applicants, lifting completion rate by 18\%.
+  \item Moved 12 services from EC2 to AWS Lambda and ECS, reducing hosting cost by \textbf{€3,200} a month.
+  \item Introduced Playwright end-to-end tests across 9 critical flows, halving production incidents within two quarters.
+  \item Designed a GraphQL API for 6 partner banks, replacing nightly CSV exports with real-time loan status updates.
+  \item Led UAT with 4 operations teams in two-week Scrum sprints, closing 95\% of feedback before each release.
+  \item Added Redis caching to credit-score lookups, cutting average API response time from 900ms to 120ms.
+\end{rbullets}
+
+\job{BRIGHTCART \textendash{} Remote}{Software Engineer}{Jun 2020 \textendash{} Feb 2023 (2 yrs 9 mos)}
+An e-commerce platform for independent retailers; part of a six-person product team.\par
+\begin{rbullets}
+  \item Shipped a Next.js storefront used by 1,500+ shops, improving page load speed by 45\%.
+  \item Designed a PostgreSQL order pipeline processing \textbf{2M+ orders} a year with zero data loss.
+  \item Mentored 3 junior developers through code review and pairing, all promoted within 18 months.
+  \item Containerised 8 services with Docker and Terraform, shrinking release time from 1 hour to \textbf{10 minutes}.
+  \item Integrated Stripe and PayPal checkout for 1,500+ merchants, reducing failed payments by 30\%.
+\end{rbullets}
+
+\job{TASKFLOW SOLUTIONS \textendash{} Cork, Ireland}{Junior Software Developer}{Sep 2018 \textendash{} May 2020 (1 yr 9 mos)}
+A process automation consultancy; built RPA and web automation for insurance and logistics clients.\par
+\begin{rbullets}
+  \item Built 25+ RPA workflows with Node.js and Puppeteer, saving clients 1,200 staff hours a month.
+  \item Automated claims data entry across 3 insurer portals, lowering error rate from 8\% to under 1\%.
+  \item Created an internal dashboard in React tracking 50,000+ automation runs a month for 12 clients.
+  \item Wrote Jest test suites for 15 automation scripts, raising test coverage from 20\% to \textbf{85\%}.
+\end{rbullets}
+
+\newpage
+%==================== EDUCATION ====================
+\rsection{\Cap{E}ducation \Cap{\&} \Cap{C}redentials}
+\textbf{MSc Software Engineering,} Example University, 2020\par
+\vspace{6pt}
+\textbf{BSc Computer Science,} Example University, 2018\par
+
+%==================== CERTIFICATIONS ====================
+\rsection{\Cap{P}rofessional \Cap{D}evelopment \textendash{} \Cap{C}ertifications}
+\textbf{AWS Certified Developer \textendash{} Associate}, May 2024\par
+\vspace{6pt}
+\textbf{AWS Certified Cloud Practitioner}, Jan 2023\par
+\vspace{6pt}
+\textbf{Professional Scrum Master I}, Oct 2022\par
+
+\end{document}
