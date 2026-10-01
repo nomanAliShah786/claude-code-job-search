@@ -1,0 +1,46 @@
+# Generated
+.playwright-mcp/
+*.aux
+*.log
+*.toc
+.DS_Store
+._*
+
+# Secrets and sessions
+.env
+.env.*
+*.pem
+*.key
+**/storage-state*.json
+**/auth*.json
+
+# Personal settings
+.claude/settings.local.json
+
+# Sensitive documents: drop them here
+private/
+*.out
+
+# Personal data: keep out of the public repo
+profile/
+jobs/*
+!jobs/_template/
+cv/variants/
+cv/build/
+cv/*.pdf
+research/
+*.out
+
+# Personal data: keep out of the public repo
+profile/
+jobs/*
+!jobs/_template/
+cv/variants/
+cv/build/
+cv/*.pdf
+cv/master-template.tex
+research/
+CLAUDE.local.md
+
+# Python cache
+__pycache__/
