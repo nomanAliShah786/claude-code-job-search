@@ -44,22 +44,23 @@ You'll type a few commands into the **Terminal**, a window where you give your c
    - Mac: `curl -fsSL https://claude.ai/install.sh | bash`
    - Windows (PowerShell): `irm https://claude.ai/install.ps1 | iex`
    - If anything goes wrong, follow the official guide at [docs.claude.com/en/docs/claude-code/setup](https://docs.claude.com/en/docs/claude-code/setup).
-3. Close the Terminal and open a new one, so it picks up what you just installed.
+3. **Node.js** runs the Playwright browser that `/fetch-jobs` uses to read job sites. Download the **LTS** version from [nodejs.org](https://nodejs.org) and install it with the default options. To check it worked, run `node --version` in a new Terminal; you should see a version number such as `v22.x.x`.
+4. Close the Terminal and open a new one, so it picks up what you just installed.
 
 ### 2. Download (clone) this project
 
-Run these two commands one at a time. The first downloads the project into a folder called `MyAICv`, and the second moves the Terminal into that folder:
+Run these two commands one at a time. The first downloads the project into a folder called `claude-code-job-search`, and the second moves the Terminal into that folder:
 
 ```bash
-git clone https://github.com/nomanAliShah786/MyAICv.git
-cd MyAICv
+git clone https://github.com/nomanAliShah786/claude-code-job-search.git
+cd claude-code-job-search
 ```
 
 The folder is in your home folder: on a Mac, open Finder and press `Cmd + Shift + H`. You can also use the green **Code → Download ZIP** button on GitHub and unzip it instead, but you then have to `cd` into wherever you unzipped it.
 
 ### 3. Start Claude in the project folder
 
-1. Make sure the Terminal is inside the project folder. If you opened a new Terminal, run `cd MyAICv` first.
+1. Make sure the Terminal is inside the project folder. If you opened a new Terminal, run `cd claude-code-job-search` first.
 2. Run:
    ```bash
    claude
@@ -68,7 +69,13 @@ The folder is in your home folder: on a Mac, open Finder and press `Cmd + Shift 
 4. Claude asks whether you **trust the files in this folder**. Choose **Yes, proceed**. This gives Claude access to the project folder, and only that folder.
 5. When Claude asks permission to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
 
-To stop Claude, type `/exit` or press `Ctrl + C` twice. Next time, open the Terminal and run `cd MyAICv` and then `claude`.
+6. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed, IrishJobs.ie, Jobs.ie and Glassdoor. Inside Claude, type:
+   ```
+   /plugin install playwright@claude-plugins-official
+   ```
+   Confirm when asked, then type `/exit` and run `claude` again so the plugin loads. To check it worked, type `/mcp`: **playwright** should be in the list. Prefer not to type commands? Just tell Claude: `Install the Playwright plugin for me.`
+
+To stop Claude, type `/exit` or press `Ctrl + C` twice. Next time, open the Terminal and run `cd claude-code-job-search` and then `claude`.
 
 ### 4. Your first conversation
 
@@ -173,7 +180,7 @@ The CV rules (section order, bullet rules, bolding, ATS constraints) live in `CL
 - Bash, to run `cv/build.sh`.
 - Optional: `pdfinfo` (poppler) for the page count, and Python 3 with `pypdf` (`python3 -m pip install --user pypdf`) for the ATS text-extraction check. The script skips or falls back when they're missing.
 - [Claude Code](https://claude.com/claude-code), for the skills.
-- For `/fetch-jobs`: `curl`, Python 3, and the Playwright MCP plugin in Claude Code (for Indeed, IrishJobs.ie, Jobs.ie and Glassdoor).
+- For `/fetch-jobs`: `curl`, Python 3, Node.js, and the Playwright plugin in Claude Code (`/plugin install playwright@claude-plugins-official`) for Indeed, IrishJobs.ie, Jobs.ie and Glassdoor. LinkedIn works without it.
 
 ## Build a CV
 
