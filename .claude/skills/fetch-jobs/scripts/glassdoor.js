@@ -3,8 +3,9 @@ async (page) => {
   const store = page;
   const w = page.context().pages().find(p => p.url().includes('glassdoor.ie'));
   await w.bringToFront();
-  const kws = ['software-engineer', 'senior-software-engineer', 'full-stack-developer', 'full-stack-engineer', 'software-developer', 'senior-software-developer'];
-  const ROLE = /software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b/i;
+  const S = await store.evaluate(() => window.__search || {});
+  const kws = (S.queries || ['software engineer', 'senior software engineer', 'full stack developer', 'full stack engineer', 'software developer', 'senior software developer']).map(q => q.toLowerCase().trim().replace(/\s+/g, '-'));
+  const ROLE = S.titles ? new RegExp(S.titles, 'i') : /software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b/i;
   await store.evaluate(() => { window.__gd = window.__gd || {}; window.__gdq = window.__gdq || 0; window.__gdd = window.__gdd || {}; });
   const [DMIN, DMAX] = await store.evaluate(() => window.__delay || [1000, 3000]);
   const sleep = () => w.waitForTimeout(DMIN + Math.random() * (DMAX - DMIN));

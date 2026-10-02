@@ -2,8 +2,9 @@ async (page) => {
   // Resumable IrishJobs.ie collector. Phase 1: search listings. Phase 2: job details (role titles only).
   const store = page;
   const w = page.context().pages().find(p => p.url().includes('irishjobs.ie'));
-  const qs = ['software-engineer', 'senior-software-engineer', 'full-stack-developer', 'full-stack-engineer', 'software-developer', 'senior-software-developer'];
-  const ROLE = /software-(engineer|developer|development-engineer)|full-?stack|(^|-)sde(-|$)/i;
+  const S = await store.evaluate(() => window.__search || {});
+  const qs = (S.queries || ['software engineer', 'senior software engineer', 'full stack developer', 'full stack engineer', 'software developer', 'senior software developer']).map(q => q.toLowerCase().trim().replace(/\s+/g, '-'));
+  const ROLE = S.titles ? new RegExp(S.titles.replace(/\\s| /g, '-'), 'i') : /software-(engineer|developer|development-engineer)|full-?stack|(^|-)sde(-|$)/i;
   await store.evaluate(() => { window.__ij = window.__ij || {}; window.__ijq = window.__ijq || 0; window.__ijp = window.__ijp || 1; window.__ijd = window.__ijd || {}; window.__ijlog = window.__ijlog || []; });
   const sleep = ms => w.waitForTimeout(ms);
   const [DMIN, DMAX] = await store.evaluate(() => window.__delay || [1000, 3000]);

@@ -3,8 +3,9 @@ async (page) => {
   const store = page;
   const w = page.context().pages().find(p => /\/\/www\.jobs\.ie/.test(p.url()));
   await w.bringToFront();
-  const qs = ['software-engineer', 'senior-software-engineer', 'full-stack-developer', 'full-stack-engineer', 'software-developer', 'senior-software-developer'];
-  const ROLE = /software-(engineer|developer|development-engineer)|full-?stack|(^|-)sde(-|$)/i;
+  const S = await store.evaluate(() => window.__search || {});
+  const qs = (S.queries || ['software engineer', 'senior software engineer', 'full stack developer', 'full stack engineer', 'software developer', 'senior software developer']).map(q => q.toLowerCase().trim().replace(/\s+/g, '-'));
+  const ROLE = S.titles ? new RegExp(S.titles.replace(/\\s| /g, '-'), 'i') : /software-(engineer|developer|development-engineer)|full-?stack|(^|-)sde(-|$)/i;
   await store.evaluate(() => { window.__js = window.__js || {}; window.__jsq = window.__jsq || 0; window.__jsp = window.__jsp || 1; window.__jsd = window.__jsd || {}; window.__jslast = window.__jslast || ''; });
   const [DMIN, DMAX] = await store.evaluate(() => window.__delay || [1000, 3000]);
   const sleep = () => w.waitForTimeout(DMIN + Math.random() * (DMAX - DMIN));

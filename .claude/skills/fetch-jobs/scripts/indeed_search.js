@@ -3,8 +3,10 @@ async (page) => {
   const store = page;
   const ctx = page.context();
   const w = ctx.pages().find(p => p !== store && p.url().includes('indeed.com')) || await ctx.newPage();
-  const qs = ['full stack developer', 'full stack engineer', 'software engineer', 'senior software engineer', 'software developer', 'senior software developer'];
-  const locs = ['Ireland', 'Dublin', 'Cork', 'Galway', 'Limerick', 'Waterford', 'Athlone'];
+  const S = await store.evaluate(() => window.__search || {});
+  const qs = S.queries || ['full stack developer', 'full stack engineer', 'software engineer', 'senior software engineer', 'software developer', 'senior software developer'];
+  const locs = S.locations || ['Ireland', 'Dublin', 'Cork', 'Galway', 'Limerick', 'Waterford', 'Athlone'];
+  const host = S.indeedHost || 'ie.indeed.com';
   const variants = ['', '&sort=date', '&sort=date&fromage=7', '&sort=date&fromage=3', '&sc=0kf%3Aexplvl(SENIOR_LEVEL)%3B', '&sc=0kf%3Aexplvl(MID_LEVEL)%3B',
                     '&sc=0kf%3Ajt(contract)%3B', '&sc=0kf%3Ajt(fulltime)%3B', '&sc=0kf%3Aattr(DSQF7)%3B', '&sort=date&sc=0kf%3Aexplvl(SENIOR_LEVEL)%3B'];
   const combos = [];
@@ -18,7 +20,7 @@ async (page) => {
     const [q, l, v] = combos[cursor];
     if (skip[q + '|' + l]) { cursor++; continue; }
     // fromage=30 unless the variant sets its own window
-    const url = `https://ie.indeed.com/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(l)}${v.includes('fromage') ? '' : '&fromage=30'}${v}`;
+    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(l)}${v.includes('fromage') ? '' : '&fromage=30'}${v}`;
     try {
       await w.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000});
     } catch (e) { blocked = 'goto error: ' + String(e).slice(0, 100); break; }

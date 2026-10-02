@@ -19,7 +19,7 @@
  job ads           for you          for one job       for that job      before you send     + mock interview
 ```
 
-- **Finds jobs for you:** collects the last 30 days of ads from LinkedIn, Indeed, IrishJobs.ie, Jobs.ie and Glassdoor, with duplicates removed.
+- **Finds jobs for you, in any country:** collects the last 30 days of ads for your roles from LinkedIn and Indeed (plus IrishJobs.ie, Jobs.ie and Glassdoor in Ireland), with duplicates removed.
 - **Ranks them honestly** against your real experience and your deal-breakers.
 - **Tailors your CV per job**, using the job's keywords, but only where your evidence backs them. Every number traces to a source you recorded, so nothing is invented.
 - **Checks every CV:** two pages at most, clean text for ATS parsers, a metric in every bullet, no repeated verbs.
@@ -98,7 +98,7 @@ The folder is in your home folder: on a Mac, open Finder and press `Cmd + Shift 
 4. Claude asks whether you **trust the files in this folder**. Choose **Yes, proceed**. This gives Claude access to the project folder, and only that folder.
 5. When Claude asks permission to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
 
-6. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed, IrishJobs.ie, Jobs.ie and Glassdoor. Inside Claude, type:
+6. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed (and IrishJobs.ie, Jobs.ie and Glassdoor in Ireland). Inside Claude, type:
    ```
    /plugin install playwright@claude-plugins-official
    ```
@@ -209,7 +209,7 @@ The CV rules (section order, bullet rules, bolding, ATS constraints) live in `CL
 - Bash, to run `cv/build.sh`.
 - Optional: `pdfinfo` (poppler) for the page count, and Python 3 with `pypdf` (`python3 -m pip install --user pypdf`) for the ATS text-extraction check. The script skips or falls back when they're missing.
 - [Claude Code](https://claude.com/claude-code), for the skills.
-- For `/fetch-jobs`: `curl`, Python 3, Node.js, and the Playwright plugin in Claude Code (`/plugin install playwright@claude-plugins-official`) for Indeed, IrishJobs.ie, Jobs.ie and Glassdoor. LinkedIn works without it.
+- For `/fetch-jobs`: `curl`, Python 3, Node.js, and the Playwright plugin in Claude Code (`/plugin install playwright@claude-plugins-official`) for Indeed and the Irish job boards. LinkedIn works without it.
 
 ## Build a CV
 
@@ -224,7 +224,7 @@ The PDF lands next to the `.tex`. Output reports the page count plus any `FAIL:`
 
 | Command | What it does |
 |---|---|
-| `/fetch-jobs [sites] [--interval MIN-MAX]` | Collects job ads from the last 30 days from LinkedIn, Indeed, IrishJobs.ie, Jobs.ie and Glassdoor into one deduplicated file |
+| `/fetch-jobs [--country] [--location] [--roles] [--sites] [--interval]` | Collects job ads from the last 30 days, for any country and role, into one deduplicated file |
 | `/job-intake <JD text or URL>` | Scaffolds a job folder from a posting and writes a gap analysis against your evidence |
 | `/rank-jobs [ads file \| URLs]` | Scores saved ads or posting URLs against your evidence and preferences; returns a ranked shortlist |
 | `/tailor-cv <job slug>` | Builds a tailored, two-page-maximum CV variant for one job, compiles it and runs the checklist |
@@ -236,16 +236,21 @@ The PDF lands next to the `.tex`. Output reports the page count plus any `FAIL:`
 ## Fetch jobs
 
 ```
-/fetch-jobs                              all five sites, default gaps
-/fetch-jobs linkedin,irishjobs           only these sites
-/fetch-jobs --interval 4-10              wait a random 4–10 s between requests
+/fetch-jobs                                                   your roles and country from your profile
+/fetch-jobs --country "United Kingdom" --location London --roles "frontend developer|react developer"
+/fetch-jobs --country Germany --location Berlin --sites linkedin
+/fetch-jobs --interval 4-10                                   wait a random 4–10 s between requests
 ```
+
+Or just ask in plain words: `Use the skills in this project. Find me product designer jobs in Toronto from the last month.`
+
+- **Any country, any role.** LinkedIn and Indeed work worldwide. In Ireland, IrishJobs.ie, Jobs.ie and Glassdoor are searched too. Without arguments, Claude uses the target roles and location from your `CLAUDE.local.md` and `profile/job-preferences.md`, and asks if they're missing.
 
 - **Interval.** `--interval MIN-MAX` sets the random gap in seconds between requests on every site (minimum 1). Without it each site keeps its tested default: LinkedIn 1.2–6 s, Indeed 5–16 s, the others 1–3 s. Use a wider range if a site starts blocking.
 - **What happens.** LinkedIn is fetched with curl. The other sites run in a Playwright browser that Claude drives; sign in to Indeed in its tab for more results. Every script is resumable, so a stopped run picks up where it left off.
-- **Output.** `research/<date>-jobs/raw/` holds each site's raw results, and `combined.jsonl` holds the deduplicated ads (Republic of Ireland, software and full stack titles, no intern or manager roles). Run `/rank-jobs` next.
+- **Output.** `research/<date>-<country>-jobs/raw/` holds each site's raw results, and `combined.jsonl` holds the deduplicated ads with a link to each (your titles only, no intern or manager roles). Run `/rank-jobs` next.
 - **When stuck.** If a site shows a captcha, a sign-in wall or a "just a moment" page, Claude stops that site and sends you a notification. Solve it in the browser and reply, and the run continues. Claude never tries to bypass a check.
-- The searches and the 30-day window are set at the top of each script in `.claude/skills/fetch-jobs/scripts/`.
+- **Defaults.** With no roles set anywhere, the scripts search software engineer and full stack roles in Ireland. The 30-day window is set in each script in `.claude/skills/fetch-jobs/scripts/`.
 
 ## Remote Control and phone notifications
 

@@ -1,7 +1,7 @@
 """Fetch the full description for every job in search.jsonl. Resumable."""
 import html, json, os, random, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
-from collect_util import get, pause
+from collect_util import TITLE_RE, get, in_country, pause
 
 OUT = "linkedin_ads.jsonl"
 done = set()
@@ -10,8 +10,8 @@ if os.path.exists(OUT):
         done = {json.loads(l)["id"] for l in f}
 
 jobs = [json.loads(l) for l in open("linkedin_search.jsonl")]
-ROLE = re.compile(r"software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b", re.I)
-jobs = [j for j in jobs if ROLE.search(j["title"]) and j["location"].endswith("Ireland") and "Northern" not in j["location"]]
+ROLE = re.compile(TITLE_RE, re.I)
+jobs = [j for j in jobs if ROLE.search(j["title"]) and in_country(j["location"])]
 todo = [j for j in jobs if j["id"] not in done]
 print(f"{len(todo)} to fetch, {len(done)} done", file=sys.stderr)
 

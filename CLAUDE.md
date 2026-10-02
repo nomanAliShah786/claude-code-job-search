@@ -180,7 +180,7 @@ Bolding guides the eye to the two or three things per section that prove the can
 - Application stages: `intake` → `drafted` → `applied` → `screen` → `onsite` → `offer` | `rejected` | `withdrawn` | `no-response`.
 
 ## Skills
-- `/fetch-jobs [sites] [--interval MIN-MAX]` collects the last 30 days of ads from LinkedIn, Indeed, IrishJobs.ie, Jobs.ie and Glassdoor into `research/<date>-jobs/combined.jsonl` for `/rank-jobs`.
+- `/fetch-jobs [--country] [--location] [--roles] [--sites] [--interval MIN-MAX]` collects the last 30 days of ads for any country from LinkedIn and Indeed (plus IrishJobs.ie, Jobs.ie and Glassdoor in Ireland) into `research/<date>-<country>-jobs/combined.jsonl` for `/rank-jobs`.
 - `/job-intake <JD text or URL>` scaffolds `jobs/<slug>/` and writes the gap analysis.
 - `/rank-jobs [ads file | URLs]` scores saved ads or new postings against the profile and returns a ranked shortlist for `/job-intake`.
 - `/tailor-cv <job slug>` builds the tailored CV variant and runs the checklist.

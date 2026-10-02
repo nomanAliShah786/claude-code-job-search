@@ -9,7 +9,7 @@ argument-hint: [job folder slug] [CV .tex or .pdf]
 Input: $ARGUMENTS
 
 - **Job first.** The first argument is the job folder slug. If it's missing, list the folders in `jobs/` (ignoring `_template` and `_ranking`) with company, role, and stage, and ask which job to score against.
-- **Then the CV.** The second argument is the CV to score. If it's missing, ask which CV, offering in this order: the job's tailored variant (the **CV variant** field in its `status.md`, if set), `cv/variants/2026-09-general-ireland.tex`, and `cv/master-template.tex`.
+- **Then the CV.** The second argument is the CV to score. If it's missing, ask which CV, offering in this order: the job's tailored variant (the **CV variant** field in its `status.md`, if set), the general (untailored) variant in `cv/variants/` if one exists, and `cv/master-template.tex`.
 
 There is no single "ATS score": Greenhouse and Ashby say they don't auto-reject, Ashby marks each criterion Meets or Does not meet, Workday HiredScore prioritises by match, and keyword tools like Jobscan compute a match rate. This skill is a proxy built from that research (sources below). Say so in the report, and never present the number as what a specific ATS will output.
 

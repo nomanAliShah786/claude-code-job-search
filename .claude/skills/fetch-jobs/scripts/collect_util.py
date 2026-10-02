@@ -19,6 +19,21 @@ def get(url, tries=6):
     return None
 
 
+# Search settings. The skill sets these from its arguments; the defaults are the original Ireland search.
+COUNTRY = os.environ.get("FETCH_COUNTRY", "Ireland")
+LOCATION = os.environ.get("FETCH_LOCATION", COUNTRY)
+QUERIES = os.environ.get("FETCH_QUERIES", "full stack developer|full stack engineer|fullstack developer|software engineer|senior software engineer|software developer|senior software developer").split("|")
+TITLE_RE = os.environ.get("FETCH_TITLES", r"software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b")
+INDEED_HOST = os.environ.get("FETCH_INDEED_HOST", "ie.indeed.com")
+
+
+def in_country(location):
+    """True if a job location is in the target country. For Ireland, Northern Ireland (UK) doesn't count."""
+    if COUNTRY == "Ireland" and "Northern" in location:
+        return False
+    return location.endswith(COUNTRY)
+
+
 def pause(default):
     """Sleep a random gap between requests. FETCH_DELAY="min-max" (seconds) overrides the default range."""
     lo, hi = map(float, os.environ.get("FETCH_DELAY", default).split("-"))

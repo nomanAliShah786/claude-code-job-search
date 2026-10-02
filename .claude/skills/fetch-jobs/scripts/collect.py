@@ -1,13 +1,8 @@
-"""Collect LinkedIn public job search results for Ireland (last 30 days)."""
+"""Collect LinkedIn public job search results for FETCH_LOCATION (last 30 days)."""
 import html, json, re, sys, time, urllib.parse
-from collect_util import get, pause
+from collect_util import LOCATION, QUERIES, get, pause
 
 # UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
-QUERIES = [
-    "full stack developer", "full stack engineer", "fullstack developer",
-    "software engineer", "senior software engineer",
-    "software developer", "senior software developer",
-]
 OUT = "linkedin_search.jsonl"
 
 
@@ -20,7 +15,7 @@ for q in QUERIES:
     start, empty = 0, 0
     while start < 1000:
         url = ("https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?"
-               + urllib.parse.urlencode({"keywords": q, "location": "Ireland", "f_TPR": "r2592000", "start": start}))
+               + urllib.parse.urlencode({"keywords": q, "location": LOCATION, "f_TPR": "r2592000", "start": start}))
         page = get(url)
         if page is None:
             print(f"{q} start={start}: gave up", file=sys.stderr)

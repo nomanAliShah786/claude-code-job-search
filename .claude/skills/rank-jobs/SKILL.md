@@ -51,4 +51,4 @@ These are triage scores from the posting text and the profile only, with no comp
    - Say these are triage scores from the posting text, and that /job-intake re-checks the full posting.
    - Ask which numbers to take forward. For each pick, run the /job-intake workflow with the stored description as the pasted posting and the link as its Source, and remind the user to confirm the ad is still open.
 
-**Links.** LinkedIn `li-<n>` → `https://www.linkedin.com/jobs/view/<n>`. Indeed `in-<key>` → `https://ie.indeed.com/viewjob?jk=<key>`. Other sources have no stored link; say "search the employer's careers page".
+**Links.** Use the ad's `url` field when it has one. Otherwise: LinkedIn `li-<n>` → `https://www.linkedin.com/jobs/view/<n>`; Indeed `in-<key>` → `https://ie.indeed.com/viewjob?jk=<key>` (older Ireland runs). Other sources have no stored link; say "search the employer's careers page".

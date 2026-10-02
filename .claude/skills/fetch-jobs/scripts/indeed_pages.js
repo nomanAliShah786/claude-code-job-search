@@ -2,7 +2,10 @@ async (page) => {
   // Signed-in Indeed pagination, resumable. State lives in the about:blank store tab.
   const store = page;
   const w = page.context().pages().find(p => p !== store && p.url().includes('indeed.com'));
-  const qs = ['software engineer', 'senior software engineer', 'full stack developer', 'full stack engineer', 'software developer', 'senior software developer'];
+  const S = await store.evaluate(() => window.__search || {});
+  const qs = S.queries || ['software engineer', 'senior software engineer', 'full stack developer', 'full stack engineer', 'software developer', 'senior software developer'];
+  const host = S.indeedHost || 'ie.indeed.com';
+  const loc = (S.locations || ['Ireland'])[0];
   const st = await store.evaluate(() => { window.__indeed = window.__indeed || {}; window.__pq = window.__pq || 0; window.__pstart = window.__pstart || 0; window.__runSeen = window.__runSeen || {}; window.__plog = window.__plog || []; return [window.__pq, window.__pstart]; });
   let [qi, start] = st, done = 0, blocked = null;
   const log = [];
@@ -21,7 +24,7 @@ async (page) => {
   };
   while (qi < qs.length && done < 25) {
     const q = qs[qi];
-    const url = `https://ie.indeed.com/jobs?q=${encodeURIComponent(q)}&l=Ireland&fromage=30&start=${start}`;
+    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(loc)}&fromage=30&start=${start}`;
     try { await w.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000}); }
     catch (e) { blocked = 'goto error: ' + String(e).slice(0, 100); break; }
     let title = await w.title().catch(() => '');

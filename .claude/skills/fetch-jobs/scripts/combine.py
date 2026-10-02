@@ -2,6 +2,8 @@
 """Usage: python3 combine.py <run folder>. Reads <run folder>/raw/, writes <run folder>/combined.jsonl."""
 import collections, json, os, re, sys
 
+from collect_util import COUNTRY, INDEED_HOST, TITLE_RE
+
 OUT_DIR = sys.argv[1]
 R = os.path.join(OUT_DIR, "raw") + "/"
 
@@ -18,13 +20,15 @@ ads = []
 for l in (open(R + "linkedin_ads.jsonl") if os.path.exists(R + "linkedin_ads.jsonl") else []):
     j = json.loads(l)
     ads.append({"source": "LinkedIn", "id": "li-" + j["id"], "title": j["title"], "company": j["company"],
-                "location": j["location"], "date": j["date"], "description": j["description"]})
+                "location": j["location"], "date": j["date"], "description": j["description"],
+                "url": "https://www.linkedin.com/jobs/view/" + j["id"]})
 # Indeed
 cards = {c["jk"]: c for c in (load(R + "indeed_search.json") or [])}
 for jk, d in load(R + "indeed_ads.json").items():
     c = cards.get(jk, {})
     ads.append({"source": "Indeed", "id": "in-" + jk, "title": d.get("title") or c.get("title", ""), "company": d.get("company") or c.get("company", ""),
-                "location": (d.get("location") or c.get("loc", "")) + ", Ireland", "date": "", "description": d.get("description", "")})
+                "location": (d.get("location") or c.get("loc", "")) + ", " + COUNTRY, "date": "", "description": d.get("description", ""),
+                "url": f"https://{INDEED_HOST}/viewjob?jk={jk}"})
 # IrishJobs and Jobs.ie (same platform and job IDs)
 for src, path in (("IrishJobs.ie", "irishjobs_ads.json"), ("Jobs.ie", "jobsie_ads.json")):
     for u, d in load(R + path).items():
@@ -50,8 +54,9 @@ for h, d in load(R + "recruitireland_ads.json").items():
 
 print("raw", collections.Counter(a["source"] for a in ads))
 
+# Northern Ireland is in the UK, so an Ireland search drops it. Other countries need no such filter.
 NI = re.compile(r"northern ireland|united kingdom|belfast|derry|londonderry|antrim|armagh|tyrone|fermanagh|newry|lisburn|\bGB\b|\bUK\b", re.I)
-ROLE = re.compile(r"software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b", re.I)
+ROLE = re.compile(TITLE_RE, re.I)
 JUNIOR = re.compile(r"\b(intern|internship|graduate|grad|student|apprentice|placement|summer)\b", re.I)
 MGMT = re.compile(r"\b(manager|director|head of|vice president|VP|chief)\b", re.I)
 NOT_SW = re.compile(r"\b(recruit|sales|account executive|mechanical|electrical|PLC|SCADA)\b", re.I)
@@ -80,7 +85,7 @@ kept = []
 for a in ads:
     if not a["description"] or len(a["description"]) < 200:
         dropped["no description"] += 1; continue
-    if NI.search(a["location"]):
+    if COUNTRY == "Ireland" and NI.search(a["location"]):
         dropped["outside Republic of Ireland"] += 1; continue
     if not ROLE.search(a["title"]):
         dropped["other title"] += 1; continue
