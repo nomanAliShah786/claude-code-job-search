@@ -66,6 +66,24 @@ header { position: sticky; top: 0; z-index: 5; background: var(--bar); backdrop-
 .seg button.on { background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 0 0 .5px rgba(0,0,0,.04); }
 .spacer { flex: 1; }
 .filters { display: contents; }
+#settings-btn { display: inline-flex; align-items: center; gap: 6px; }
+.sync { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 10px; background: var(--fill-2); }
+.sync-status { font-size: 12px; color: var(--ink-2); padding: 0 8px 0 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sync-status::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); vertical-align: middle; margin: 0 6px 2px 0; }
+.sync-status.paused::before { background: var(--gray); }
+.sync-status.offline { color: var(--red); }
+.sync-status.offline::before { background: var(--red); }
+#reload-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 5px; border-radius: 8px; }
+.countdown { position: relative; width: 22px; height: 22px; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+.countdown svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.countdown circle { fill: none; stroke-width: 2.2; }
+.countdown .track { stroke: color-mix(in srgb, currentColor 20%, transparent); }
+.countdown .arc { stroke: currentColor; stroke-linecap: round; stroke-dasharray: 50.27; transition: stroke-dashoffset .25s linear; }
+.countdown b { font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; position: relative; }
+.countdown.paused { color: var(--gray); }
+.countdown.offline { color: var(--red); }
+#reload-btn.spin .countdown svg { animation: spin .8s linear infinite; }
+@keyframes spin { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
 [hidden] { display: none !important; }
 .pagebar { max-width: 1440px; margin: 0 auto; padding: 8px 28px 0; }
 .pagebar .seg button { padding: 5px 18px; }
@@ -92,7 +110,7 @@ details.desc summary { cursor: pointer; color: var(--blue); margin: 24px 0 8px 1
 details.desc pre { max-height: none; }
 
 main { max-width: 1440px; margin: 0 auto; padding: 24px 28px 64px; }
-.stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: .5px; background: var(--sep); border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden; }
+.stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--sep); border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden; }
 .stat { padding: 16px 20px; background: var(--card); }
 .stat b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .stat span { color: var(--ink-2); font-size: 12px; }
@@ -221,6 +239,10 @@ pre.feedback { white-space: pre-wrap; font: inherit; font-size: 13px; background
   .titlebar { flex-wrap: nowrap; }
   .titlebar h1 { font-size: 24px; white-space: nowrap; }
   .titlebar button { font-size: 13px; padding: 6px 10px; white-space: nowrap; }
+  #reload-btn .label, #settings-btn span, .sync-status { display: none; }
+  .sync { padding: 0; background: none; }
+  #reload-btn { padding: 5px 7px; }
+  .titlebar { gap: 6px; }
   .titlebar .sub { display: none; }
   .toolbar { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 10px; }
   .toolbar > * { min-width: 0; }
@@ -274,7 +296,11 @@ pre.feedback { white-space: pre-wrap; font: inherit; font-size: 13px; background
   <div class="titlebar">
     <h1>Applications</h1><span class="sub" id="sub"></span>
     <span class="spacer"></span>
-    <button id="settings-btn" class="tinted" title="Edit the cold DM template">DM Template</button>
+    <div class="sync">
+      <span class="sync-status" id="sync-status">Live</span>
+      <button id="reload-btn" class="tinted" aria-label="Reload"><span class="countdown" id="countdown" role="timer" aria-live="off"><svg width="22" height="22" viewBox="0 0 22 22"><circle class="track" cx="11" cy="11" r="8"/><circle class="arc" cx="11" cy="11" r="8"/></svg><b>5</b></span><span class="label">Reload</span></button>
+    </div>
+    <button id="settings-btn" class="tinted" title="Edit the cold DM template" aria-label="DM Template"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="1.5" y="3.5" width="13" height="9" rx="2"/><path d="M2 4.5l6 4.5 6-4.5"/></svg><span>DM Template</span></button>
     <button id="add-btn" class="primary">Add Job</button>
   </div>
   <div class="pagebar"><div class="seg" id="page"><button data-page="apps">Applications</button><button data-page="ads">Job Ads</button></div></div>
@@ -336,7 +362,8 @@ Thanks,
 {me}`;
 
 const state = { stages: [], today: '', jobs: [], openSlug: null, tab: 'overview', tableSort: { key: 'activity', asc: false },
-  ads: null, openAd: null, adLimit: 60, adDesc: {} };
+  ads: null, openAd: null, adLimit: 60, adDesc: {}, saving: 0, syncing: false, etag: { jobs: '', ads: '' }, syncedAt: null };
+const POLL_MS = 5000;
 const VERDICT_TINT = { 'Strong Fit': 'var(--green)', 'Good Fit': 'var(--teal)', 'Moderate Fit': 'var(--blue)', 'Weak Fit': 'var(--orange)', 'Poor Fit': 'var(--gray)' };
 const prefs = loadPrefs();
 const $ = (s, el = document) => el.querySelector(s);
@@ -355,16 +382,71 @@ function toast(msg, err) {
 }
 
 async function api(method, url, data) {
+  if (method !== 'GET') state.saving++;
+  try { return await request(method, url, data); } finally { if (method !== 'GET') state.saving--; }
+}
+async function request(method, url, data) {
   const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: data ? JSON.stringify(data) : undefined });
   const out = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(out.error || res.statusText);
   return out;
 }
 
+// GET that sends the last ETag; returns null when the server says nothing changed (304, no body).
+async function fetchIfChanged(url, key, force) {
+  const res = await fetch(url, { cache: 'no-store', headers: !force && state.etag[key] ? { 'If-None-Match': state.etag[key] } : {} });
+  if (res.status === 304) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return { data, tag: res.headers.get('ETag') || '' };
+}
+
 async function load() {
-  const data = await api('GET', '/api/jobs');
+  const { data, tag } = await fetchIfChanged('/api/jobs', 'jobs', true);
   Object.assign(state, { stages: data.stages, today: data.today, jobs: data.jobs });
+  state.etag.jobs = tag; state.syncedAt = new Date();
   render();
+}
+
+// Reload from disk: on the button, and every 5 s unless you're typing, saving or the tab is hidden.
+function busy() {
+  const el = document.activeElement;
+  return state.saving > 0 || $('#modal').classList.contains('open') || document.querySelector('.col.over')
+    || (el && /INPUT|TEXTAREA|SELECT/.test(el.tagName) && el.id !== 'search' && !el.closest('.toolbar'));
+}
+
+async function sync(manual) {
+  if (state.syncing || (!manual && (document.hidden || busy()))) return;
+  state.syncing = true; $('#reload-btn').classList.add('spin');
+  try {
+    let changed = false;
+    // The ETag is stored only once the data is applied, so a change skipped while you edit is fetched again next time.
+    const jobs = await fetchIfChanged('/api/jobs', 'jobs');
+    if (jobs && (manual || !busy())) {
+      Object.assign(state, { stages: jobs.data.stages, today: jobs.data.today, jobs: jobs.data.jobs }); state.etag.jobs = jobs.tag; changed = true;
+    }
+    if (state.ads && (manual || prefs.page === 'ads')) {
+      const ads = await fetchIfChanged('/api/ads', 'ads');
+      if (ads && (manual || !busy())) { state.ads = ads.data.ads; state.etag.ads = ads.tag; changed = true; }
+    }
+    state.syncedAt = new Date(); state.offline = false;
+    if (changed) {
+      const scroll = $('#drawer .body')?.scrollTop, page = window.scrollY;
+      render();
+      if (scroll) $('#drawer .body').scrollTop = scroll;
+      window.scrollTo(0, page);
+    }
+    if (manual) toast(changed ? 'Reloaded' : 'Already up to date');
+  } catch (e) {
+    state.offline = true;
+    if (manual) toast(e.message, true);
+  } finally {
+    state.syncing = false; state.nextSync = Date.now() + POLL_MS; setTimeout(() => $('#reload-btn').classList.remove('spin'), manual ? 400 : 0);
+  }
+}
+
+function renderSub() {
+  $('#sub').textContent = new Date(state.today).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 // ---------- derived values ----------
@@ -451,7 +533,7 @@ const scoreChip = (j) => (j.score ? `<span class="chip score" title="${esc(j.sco
 
 function render() {
   fillFilterOptions();
-  $('#sub').textContent = new Date(state.today).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  renderSub();
   renderStats();
   renderNext();
   const ads = prefs.page === 'ads';
@@ -748,7 +830,8 @@ const adById = (id) => state.ads.find((a) => a.id === id);
 async function loadAds() {
   $('#content').innerHTML = '<div class="empty">Loading ads…</div>';
   try {
-    state.ads = (await api('GET', '/api/ads')).ads;
+    const { data, tag } = await fetchIfChanged('/api/ads', 'ads', true);
+    state.ads = data.ads; state.etag.ads = tag;
     const el = $('#a-source');
     el.innerHTML = '<option value="">Any Source</option>' + [...new Set(state.ads.map((a) => a.source))].sort().map((x) => `<option>${esc(x)}</option>`).join('');
     renderAds();
@@ -940,6 +1023,26 @@ $('#sort').addEventListener('change', (e) => (state.tableSort = { key: e.target.
   $(s).addEventListener(s === '#search' ? 'input' : 'change', () => { state.adLimit = 60; refresh(); }));
 $('#add-btn').onclick = addJobModal;
 $('#settings-btn').onclick = dmModal;
+$('#reload-btn').onclick = () => sync(true);
+// Sync control: status text plus the Reload button, whose ring counts down to the next auto-reload.
+state.nextSync = Date.now() + POLL_MS;
+setInterval(() => {
+  const ring = $('#countdown'), status = $('#sync-status'), paused = document.hidden || busy();
+  if (paused) state.nextSync = Date.now() + POLL_MS;
+  const left = Math.max(0, state.nextSync - Date.now()), secs = Math.ceil(left / 1000);
+  const mode = paused ? 'paused' : state.offline ? 'offline' : 'live';
+  const time = state.syncedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) || '';
+  ring.className = 'countdown ' + mode;
+  ring.querySelector('b').textContent = mode === 'paused' ? '‖' : mode === 'offline' ? '!' : secs || '';
+  ring.querySelector('.arc').style.strokeDashoffset = mode === 'paused' ? 0 : 50.27 * (1 - left / POLL_MS);
+  status.className = 'sync-status ' + mode;
+  status.textContent = mode === 'paused' ? 'Paused while you edit' : mode === 'offline' ? 'Offline · retrying' : `Live · synced ${time}`;
+  $('#reload-btn').title = (mode === 'paused' ? 'Auto-reload is paused while you edit.'
+    : mode === 'offline' ? "Can't reach the tracker server. Is it still running? Retrying every 5 s."
+    : `Auto-reloads in ${secs} s.`) + ' Click to reload now.';
+  if (!paused && left === 0 && !state.syncing) sync(false);
+}, 250);
+document.addEventListener('visibilitychange', () => !document.hidden && sync(false));
 $('#scrim').onclick = closeDrawer;
 $('#modal').addEventListener('mousedown', (e) => e.target.id === 'modal' && closeModal());
 

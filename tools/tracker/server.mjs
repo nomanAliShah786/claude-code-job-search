@@ -3,6 +3,7 @@
 // tracker.json holds what status.md has no place for: labels, notes, outreach, follow-ups, starred/hidden ads.
 // Fetched ads come from research/*/combined.jsonl, with fit scores from jobs/_ranking/scores.jsonl.
 // Run: node tools/tracker/server.mjs   then open http://localhost:4321
+import crypto from 'node:crypto';
 import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -216,6 +217,26 @@ async function createJob({ company, role, posting, description, note }) {
   return slug;
 }
 
+// Cheap version tag from file sizes and modification times (no reads), so polls get 304 when nothing changed.
+async function etag(paths) {
+  const parts = await Promise.all(paths.map(async (p) => {
+    try { const st = await fs.stat(p); return `${p}:${st.mtimeMs}:${st.size}`; } catch { return `${p}:-`; }
+  }));
+  return `"${crypto.createHash('sha1').update(today() + '|' + parts.join('|')).digest('base64url')}"`;
+}
+
+async function jobsVersion() {
+  const names = await slugs();
+  return etag([JOBS, TRACKER, SCORES, ...names.flatMap((n) => [path.join(JOBS, n), path.join(JOBS, n, 'status.md')])]);
+}
+
+async function adsVersion() {
+  const dirs = (await fs.readdir(RESEARCH, { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory()).map((d) => d.name);
+  const names = await slugs();
+  return etag([RESEARCH, JOBS, TRACKER, SCORES, ...dirs.map((d) => path.join(RESEARCH, d, 'combined.jsonl')),
+    ...names.map((n) => path.join(JOBS, n, 'status.md'))]);
+}
+
 async function body(req) {
   let data = '';
   for await (const chunk of req) data += chunk;
@@ -223,8 +244,8 @@ async function body(req) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const send = (code, payload, type = 'application/json') => {
-    res.writeHead(code, { 'Content-Type': type, 'Cache-Control': 'no-store' });
+  const send = (code, payload, type = 'application/json', headers = {}) => {
+    res.writeHead(code, { 'Content-Type': type, 'Cache-Control': 'no-store', ...headers });
     res.end(type === 'application/json' ? JSON.stringify(payload) : payload);
   };
   try {
@@ -234,8 +255,13 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/') {
       return send(200, await fs.readFile(new URL('./index.html', import.meta.url)), 'text/html; charset=utf-8');
     }
-    if (req.method === 'GET' && url.pathname === '/api/jobs') return send(200, { stages: STAGES, today: today(), jobs: await listJobs() });
-    if (req.method === 'GET' && url.pathname === '/api/ads') return send(200, { ads: await listAds() });
+    const versioned = { '/api/jobs': [jobsVersion, async () => ({ stages: STAGES, today: today(), jobs: await listJobs() })],
+      '/api/ads': [adsVersion, async () => ({ ads: await listAds() })] }[url.pathname];
+    if (req.method === 'GET' && versioned) {
+      const tag = await versioned[0]();
+      if (req.headers['if-none-match'] === tag) { res.writeHead(304, { ETag: tag, 'Cache-Control': 'no-store' }); return res.end(); }
+      return send(200, await versioned[1](), 'application/json', { ETag: tag });
+    }
     if (req.method === 'GET' && a && !a[2]) return send(200, { description: await adDescription(decodeURIComponent(a[1])) });
     if (req.method === 'PUT' && a?.[2] === 'mark') { await markAd(decodeURIComponent(a[1]), await body(req)); return send(200, { ok: true }); }
     if (req.method === 'POST' && a?.[2] === 'track') return send(201, { slug: await trackAd(decodeURIComponent(a[1])) });

@@ -24,7 +24,7 @@
 - **Tailors your CV per job**, using the job's keywords, but only where your evidence backs them. Every number traces to a source you recorded, so nothing is invented.
 - **Checks every CV:** two pages at most, clean text for ATS parsers, a metric in every bullet, no repeated verbs.
 - **Covers the rest:** cover letters, an ATS score out of 100, application tracking, follow-ups and interview prep.
-- **Tracks it all on one page:** a local job tracker shows your applications on a board and every fetched ad with its fit score, with notes, labels, referral outreach and follow-up reminders.
+- **Tracks it all on one page:** a local [job tracker](#job-tracker) shows your applications on a board and every fetched ad with its fit score, with notes, labels, referral outreach and follow-up reminders.
 
 <p align="center">
   <a href="docs/sample-cv.pdf"><img src="docs/sample-cv-page1.png" alt="Sample CV page 1, for a fictional candidate" width="420"></a>
@@ -261,6 +261,11 @@ Or just ask in plain words: `Use the skills in this project. Find me product des
 
 A local web page for keeping track of your job search. It reads and writes the files in this project, so it stays in step with the skills.
 
+<p align="center">
+  <img src="docs/job-tracker-demo.gif" alt="Job tracker tour: the applications board, a job's details, outreach and history, the list view, job ads with fit scores, and dark mode" width="860">
+  <br><em>A tour of the tracker with demo data (fictional companies and jobs).</em>
+</p>
+
 ```bash
 node tools/tracker/server.mjs        # then open http://localhost:4321
 PORT=5000 node tools/tracker/server.mjs
@@ -282,9 +287,20 @@ PORT=5000 node tools/tracker/server.mjs
 
 Details:
 
+- **Always current.** The page refreshes itself every 5 seconds, so changes made by the skills or by hand show up on their own. It waits while you're typing, and the **Reload** button refreshes on demand. Each check only compares file timestamps, and data is downloaded only when something actually changed.
 - **Where data lives.** Stage, posting, CV and contact stay in each `status.md`. Everything else goes in `jobs/tracker.json`, created on your first save. Your DM template is kept in the browser.
 - **Private.** The server listens only on `127.0.0.1`, has no dependencies, and never sends data anywhere.
 - **Any screen.** Light and dark mode, and a layout that works on a phone. Dragging cards needs a mouse; on a touch screen, use Change Stage.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/job-tracker-board.png" alt="Applications board with stats, Up Next actions and stage columns"><br><em>Applications: stats, Up Next and the board</em></td>
+    <td width="50%"><img src="docs/job-tracker-ads.png" alt="Job Ads list with fit scores and an ad's fit breakdown, deal-breakers and strengths"><br><em>Job Ads: fit scores, deal-breakers and strengths</em></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/job-tracker-dark.png" alt="Dark mode with a job's details open" width="50%"><br><em>Dark mode</em></td>
+  </tr>
+</table>
 
 ## Remote Control and phone notifications
 
