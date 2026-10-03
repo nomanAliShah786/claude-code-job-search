@@ -24,6 +24,7 @@
 - **Tailors your CV per job**, using the job's keywords, but only where your evidence backs them. Every number traces to a source you recorded, so nothing is invented.
 - **Checks every CV:** two pages at most, clean text for ATS parsers, a metric in every bullet, no repeated verbs.
 - **Covers the rest:** cover letters, an ATS score out of 100, application tracking, follow-ups and interview prep.
+- **Tracks it all on one page:** a local job tracker shows your applications on a board and every fetched ad with its fit score, with notes, labels, referral outreach and follow-up reminders.
 
 <p align="center">
   <a href="docs/sample-cv.pdf"><img src="docs/sample-cv-page1.png" alt="Sample CV page 1, for a fictional candidate" width="420"></a>
@@ -171,6 +172,7 @@ A good habit: when you catch yourself telling Claude the same thing twice ("alwa
 2. `/fetch-jobs` collects fresh ads and `/rank-jobs` shortlists them, or paste a job ad: `/job-intake` creates a job folder and a gap analysis.
 3. `/tailor-cv` copies the master template, picks the evidence that fits the job, and compiles it with `cv/build.sh`, which checks the rules.
 4. `/cover-letter`, `/ats-score`, `/outcome` and `/interview` cover the rest of the application.
+5. The [job tracker](#job-tracker) shows where every application stands and what to do next.
 
 The CV rules (section order, bullet rules, bolding, ATS constraints) live in `CLAUDE.md`.
 
@@ -186,6 +188,8 @@ The CV rules (section order, bullet rules, bolding, ATS constraints) live in `CL
 | `profile/` | Your evidence, stories, preferences and past CVs *(gitignored)* |
 | `jobs/_template/` | Scaffold for each application: `posting.md`, `analysis.md`, `cover-letter.md`, `status.md` |
 | `jobs/<date>-<company>-<role>/` | One folder per application *(gitignored)* |
+| `jobs/tracker.json` | Labels, notes, outreach and starred or hidden ads saved by the job tracker *(gitignored)* |
+| `tools/tracker/` | The [job tracker](#job-tracker): a small Node.js server and one HTML page |
 | `research/` | Job ads saved by `/fetch-jobs` (`research/<date>-jobs/combined.jsonl`) and read by `/rank-jobs` *(gitignored)* |
 | `.claude/skills/` | The Claude Code skills listed below |
 
@@ -209,6 +213,7 @@ The CV rules (section order, bullet rules, bolding, ATS constraints) live in `CL
 - Bash, to run `cv/build.sh`.
 - Optional: `pdfinfo` (poppler) for the page count, and Python 3 with `pypdf` (`python3 -m pip install --user pypdf`) for the ATS text-extraction check. The script skips or falls back when they're missing.
 - [Claude Code](https://claude.com/claude-code), for the skills.
+- For the job tracker: Node.js 18 or later. No `npm install` needed.
 - For `/fetch-jobs`: `curl`, Python 3, Node.js, and the Playwright plugin in Claude Code (`/plugin install playwright@claude-plugins-official`) for Indeed and the Irish job boards. LinkedIn works without it.
 
 ## Build a CV
@@ -251,6 +256,35 @@ Or just ask in plain words: `Use the skills in this project. Find me product des
 - **Output.** `research/<date>-<country>-jobs/raw/` holds each site's raw results, and `combined.jsonl` holds the deduplicated ads with a link to each (your titles only, no intern or manager roles). Run `/rank-jobs` next.
 - **When stuck.** If a site shows a captcha, a sign-in wall or a "just a moment" page, Claude stops that site and sends you a notification. Solve it in the browser and reply, and the run continues. Claude never tries to bypass a check.
 - **Defaults.** With no roles set anywhere, the scripts search software engineer and full stack roles in Ireland. The 30-day window is set in each script in `.claude/skills/fetch-jobs/scripts/`.
+
+## Job tracker
+
+A local web page for keeping track of your job search. It reads and writes the files in this project, so it stays in step with the skills.
+
+```bash
+node tools/tracker/server.mjs        # then open http://localhost:4321
+PORT=5000 node tools/tracker/server.mjs
+```
+
+**Applications** shows every folder in `jobs/`:
+
+- **Board or list.** Drag a card to a new stage, or use Change Stage. Either way it updates **Current stage** and adds a dated row to that job's `status.md`, just as `/outcome` does.
+- **Up Next.** Suggests the next step for each job (build the CV, draft the cover letter, chase an application after 7 days, mark it no-response after 21) with a button that copies the matching slash command.
+- **Per job.** Category, priority, labels, applied date, follow-up date, salary, location and dated notes. Posting, CV variant and contact are edited straight into `status.md`.
+- **Outreach.** Log the people you contact for a referral or a cold DM: channel, status, sent date and follow-up date. Draft a message from your own template (DM Template, with `{first}`, `{company}`, `{role}`, `{pitch}` and `{me}` placeholders) and copy it. Nothing is ever sent for you.
+- **Stats.** Active applications, applications this week, response rate, interviews, DM replies and actions due.
+
+**Job Ads** shows every ad from `research/*/combined.jsonl`, with fit scores from `/rank-jobs` (`jobs/_ranking/scores.jsonl`):
+
+- Search and filter by fit, source, posting date and status (not yet tracked, starred, tracked, hidden, skipped).
+- Open an ad to see its fit breakdown, deal-breaker checks, strengths, gaps and the full description.
+- **Track This Job** creates the job folder from `jobs/_template/`, with the posting already filled in. Run `/job-intake` next for the gap analysis.
+
+Details:
+
+- **Where data lives.** Stage, posting, CV and contact stay in each `status.md`. Everything else goes in `jobs/tracker.json`, created on your first save. Your DM template is kept in the browser.
+- **Private.** The server listens only on `127.0.0.1`, has no dependencies, and never sends data anywhere.
+- **Any screen.** Light and dark mode, and a layout that works on a phone. Dragging cards needs a mouse; on a touch screen, use Change Stage.
 
 ## Remote Control and phone notifications
 

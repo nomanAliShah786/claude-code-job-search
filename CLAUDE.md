@@ -94,7 +94,8 @@ Mention the target role type, years and breadth of relevant experience, key doma
 \end{paracol}
 ```
 - One short keyword group per `\item`, so the order in which an ATS reads the columns doesn't matter.
-- Keep the three columns roughly balanced.
+- **Balanced rows, always.** All three columns hold the same number of items, and no item wraps onto a second line, so the rows line up. This applies to the master and to every variant. If the count doesn't divide by 3, merge, split or add a backed item until it does; never leave one column short.
+- **At most 30 items in a tailored variant** (10 per column at most, given balanced rows). The master keeps its full list.
 - Only skills relevant to the job description and backed by `evidence.md`. Tailor by reordering, swapping, and cutting items.
 
 ### 4. Professional Experience
@@ -166,7 +167,7 @@ Bolding guides the eye to the two or three things per section that prove the can
 - [ ] No JD bullets or phrasing copied; keywords only where evidence backs them.
 - [ ] Titles are role names only; all dates use `\textendash{}`.
 - [ ] Section order correct; each role has a one- or two-line intro, then bullets.
-- [ ] Key Skills columns balanced, every item relevant and backed.
+- [ ] Key Skills columns hold the same number of items with no wrapped items, at most 30 in a variant, every item relevant and backed.
 - [ ] No LinkedIn; email is plain text.
 - [ ] Nothing feels tight when the PDF is viewed.
 
