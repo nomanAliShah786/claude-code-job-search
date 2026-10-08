@@ -60,52 +60,84 @@ Treat Claude here like a junior assistant who sits next to you. You can work wit
 - **Give an instruction:** "Make my CV fit this job ad." Claude does it once.
 - **Build a system:** write down *how* you want something done (a **skill**), and Claude follows it the same way every time. The skills in this project are exactly that: systems that keep Claude aligned with you, like the protocols Steve Rogers drilled into the Avengers.
 
-You'll type a few commands into the **Terminal**, a window where you give your computer text instructions. Copy each command, paste it into the Terminal, and press **Enter**.
+You'll type a few commands into the **Terminal**, a window where you give your computer text instructions. **You never need to type a command yourself: copy and paste it.**
 
-- **Mac:** press `Cmd + Space`, type `Terminal`, press Enter.
-- **Windows:** press the Windows key, type `PowerShell`, press Enter.
+- **Open the Terminal.** Mac: press `Cmd + Space`, type `Terminal`, press Enter. Windows: press the Windows key, type `PowerShell`, press Enter.
+- **Copy:** hover over any grey box below and click the **copy icon** in its top-right corner.
+- **Paste:** click inside the Terminal, then press `Cmd + V` (Mac) or right-click (Windows). Press **Enter** to run it.
+- Paste **one box at a time** and wait until it finishes (the blinking cursor comes back) before the next one.
 
 ### 1. Install the tools (one time only)
 
 1. **Git** downloads this project to your computer.
-   - Mac: run `xcode-select --install` and click **Install** in the window that opens.
+   - Mac: paste this, then click **Install** in the window that opens:
+     ```bash
+     xcode-select --install
+     ```
    - Windows: download and install it from [git-scm.com](https://git-scm.com/download/win), keeping all the default options.
 2. **Claude Code** is the AI assistant that does the work. You need a paid Claude account (Pro or Max) at [claude.ai](https://claude.ai).
-   - Mac: `curl -fsSL https://claude.ai/install.sh | bash`
-   - Windows (PowerShell): `irm https://claude.ai/install.ps1 | iex`
+   - Mac:
+     ```bash
+     curl -fsSL https://claude.ai/install.sh | bash
+     ```
+   - Windows (PowerShell):
+     ```powershell
+     irm https://claude.ai/install.ps1 | iex
+     ```
    - If anything goes wrong, follow the official guide at [docs.claude.com/en/docs/claude-code/setup](https://docs.claude.com/en/docs/claude-code/setup).
-3. **Node.js** runs the Playwright browser that `/fetch-jobs` uses to read job sites. Download the **LTS** version from [nodejs.org](https://nodejs.org) and install it with the default options. To check it worked, run `node --version` in a new Terminal; you should see a version number such as `v22.x.x`.
-4. Close the Terminal and open a new one, so it picks up what you just installed.
+3. **Node.js** runs the Playwright browser that `/fetch-jobs` uses to read job sites. Download the **LTS** version from [nodejs.org](https://nodejs.org) and install it with the default options.
+4. **Close the Terminal and open a new one**, so it picks up what you just installed. To check everything worked, paste this; you should see a version number such as `v22.x.x`:
+   ```bash
+   node --version
+   ```
 
 ### 2. Download (clone) this project
 
-Run these two commands one at a time. The first downloads the project into a folder called `claude-code-job-search`, and the second moves the Terminal into that folder:
+Paste these three boxes one at a time. They always put the project in the same place, your home folder, so you can't lose it.
 
+Go to your home folder:
+```bash
+cd ~
+```
+Download the project:
 ```bash
 git clone https://github.com/nomanAliShah786/claude-code-job-search.git
-cd claude-code-job-search
+```
+Step into the project folder:
+```bash
+cd ~/claude-code-job-search
 ```
 
-The folder is in your home folder: on a Mac, open Finder and press `Cmd + Shift + H`. You can also use the green **Code → Download ZIP** button on GitHub and unzip it instead, but you then have to `cd` into wherever you unzipped it.
+**Check you're in the right place:** the line where you type should now end in `claude-code-job-search`. If it says "No such file or directory", the download didn't finish: paste the second box again.
+
+To see the folder in Finder (Mac), press `Cmd + Shift + H`. On Windows it's in `C:\Users\<your name>`.
+
+> **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Unzip it, then in the Terminal type `cd` and a space (don't press Enter yet), **drag the unzipped folder into the Terminal window**, and press Enter. The Terminal fills in the folder's location for you. Even easier: delete the ZIP and use the three boxes above.
 
 ### 3. Start Claude in the project folder
 
-1. Make sure the Terminal is inside the project folder. If you opened a new Terminal, run `cd claude-code-job-search` first.
-2. Run:
+1. Paste:
    ```bash
    claude
    ```
-3. The first time, Claude opens your browser to sign in. Sign in with your Claude account, then go back to the Terminal.
-4. Claude asks whether you **trust the files in this folder**. Choose **Yes, proceed**. This gives Claude access to the project folder, and only that folder.
-5. When Claude asks permission to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
-
-6. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed (and IrishJobs.ie, Jobs.ie and Glassdoor in Ireland). Inside Claude, type:
+2. The first time, Claude opens your browser to sign in. Sign in with your Claude account, then go back to the Terminal.
+3. Claude asks whether you **trust the files in this folder**. Choose **Yes, proceed**. This gives Claude access to the project folder, and only that folder.
+4. When Claude asks permission to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
+5. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed (and IrishJobs.ie, Jobs.ie and Glassdoor in Ireland). Paste this inside Claude:
    ```
    /plugin install playwright@claude-plugins-official
    ```
-   Confirm when asked, then type `/exit` and run `claude` again so the plugin loads. To check it worked, type `/mcp`: **playwright** should be in the list. Prefer not to type commands? Just tell Claude: `Install the Playwright plugin for me.`
+   Confirm when asked, then type `/exit` and paste `claude` again so the plugin loads. To check it worked, type `/mcp`: **playwright** should be in the list. Prefer not to type commands? Just tell Claude: `Install the Playwright plugin for me.`
 
-To stop Claude, type `/exit` or press `Ctrl + C` twice. Next time, open the Terminal and run `cd claude-code-job-search` and then `claude`.
+To stop Claude, type `/exit` or press `Ctrl + C` twice.
+
+**Every time you come back**, open a new Terminal and paste these two boxes, one at a time. They work from anywhere:
+```bash
+cd ~/claude-code-job-search
+```
+```bash
+claude
+```
 
 ### 4. Your first conversation
 
