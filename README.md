@@ -60,78 +60,130 @@ Treat Claude here like a junior assistant who sits next to you. You can work wit
 - **Give an instruction:** "Make my CV fit this job ad." Claude does it once.
 - **Build a system:** write down *how* you want something done (a **skill**), and Claude follows it the same way every time. The skills in this project are exactly that: systems that keep Claude aligned with you, like the protocols Steve Rogers drilled into the Avengers.
 
-You'll type a few commands into the **Terminal**, a window where you give your computer text instructions. **You never need to type a command yourself: copy and paste it.**
+You'll type a few commands into a window where you give your computer text instructions: the **Terminal** on a Mac, **PowerShell** on Windows. **You never need to type a command yourself: copy and paste it.**
 
-- **Open the Terminal.** Mac: press `Cmd + Space`, type `Terminal`, press Enter. Windows: press the Windows key, type `PowerShell`, press Enter.
-- **Copy:** hover over any grey box below and click the **copy icon** in its top-right corner.
-- **Paste:** click inside the Terminal, then press `Cmd + V` (Mac) or right-click (Windows). Press **Enter** to run it.
-- Paste **one box at a time** and wait until it finishes (the blinking cursor comes back) before the next one.
+How to copy and paste a command:
 
-### 1. Install the tools (one time only)
+1. Hover your mouse over a grey box below. A **copy icon** appears in its top-right corner. Click it.
+2. Go to the Terminal (Mac) or PowerShell (Windows) window and click inside it.
+3. Paste: press `Cmd + V` on a Mac, or right-click on Windows.
+4. Press **Enter**.
+5. Wait until it finishes: the blinking cursor comes back on a new line. Only then copy the next box.
 
-1. **Git** downloads this project to your computer.
-   - Mac: paste this, then click **Install** in the window that opens:
-     ```bash
-     xcode-select --install
-     ```
-   - Windows: download and install it from [git-scm.com](https://git-scm.com/download/win), keeping all the default options.
-2. **Claude Code** is the AI assistant that does the work. You need a paid Claude account (Pro or Max) at [claude.ai](https://claude.ai).
-   - Mac:
-     ```bash
-     curl -fsSL https://claude.ai/install.sh | bash
-     ```
-   - Windows (PowerShell):
-     ```powershell
-     irm https://claude.ai/install.ps1 | iex
-     ```
-   - If anything goes wrong, follow the official guide at [docs.claude.com/en/docs/claude-code/setup](https://docs.claude.com/en/docs/claude-code/setup).
-3. **Node.js** runs the Playwright browser that `/fetch-jobs` uses to read job sites. Download the **LTS** version from [nodejs.org](https://nodejs.org) and install it with the default options.
-4. **Close the Terminal and open a new one**, so it picks up what you just installed. To check everything worked, paste this; you should see a version number such as `v22.x.x`:
+### 1. Set up your computer (one time only)
+
+Follow only the part for your computer: **[Mac](#mac)** or **[Windows](#windows)**. Both end with the project downloaded to your home folder.
+
+#### Mac
+
+1. **Open the Terminal.** Press `Cmd + Space`, type `Terminal`, and press Enter. A window with a blinking cursor opens. Keep it open for every step below.
+2. **Install Git** (it downloads this project). Copy this box, go to the Terminal, paste it and press Enter:
+   ```bash
+   xcode-select --install
+   ```
+   A window pops up. Click **Install**, agree to the licence, and wait until it says the software was installed. If the Terminal says it's "already installed", that's fine: go to the next step.
+3. **Install Claude Code** (the AI assistant that does the work). You need a paid Claude account (Pro or Max) at [claude.ai](https://claude.ai). Copy this box, go back to the Terminal, paste it and press Enter:
+   ```bash
+   curl -fsSL https://claude.ai/install.sh | bash
+   ```
+   Wait until the cursor comes back. If you see an error, follow the [official setup guide](https://docs.claude.com/en/docs/claude-code/setup).
+4. **Install Node.js** (it runs the browser `/fetch-jobs` uses to read job sites). Open [nodejs.org](https://nodejs.org) in your web browser, click the **LTS** download button, open the downloaded file from your **Downloads** folder, and click **Continue** through the installer with the default options.
+5. **Restart the Terminal.** Press `Cmd + Q` to quit it, then open it again as in step 1. This makes it see what you just installed.
+6. **Check it worked.** Copy this box, paste it into the Terminal and press Enter:
    ```bash
    node --version
    ```
+   You should see a version number such as `v22.x.x`. If you see "command not found", go back to step 4.
+7. **Download the project.** Copy and paste these three boxes into the Terminal, one at a time, pressing Enter after each.
 
-### 2. Download (clone) this project
+   Go to your home folder:
+   ```bash
+   cd ~
+   ```
+   Download the project there:
+   ```bash
+   git clone https://github.com/nomanAliShah786/claude-code-job-search.git
+   ```
+   Step inside the project folder:
+   ```bash
+   cd ~/claude-code-job-search
+   ```
+8. **Check you're in the right place.** Look at the line where the cursor blinks: it should now include `claude-code-job-search`. If you see "No such file or directory", the download didn't finish: paste the `git clone` box again.
+9. **Make a folder for your old CVs.** Paste this box into the Terminal and press Enter. It creates the folder and opens it in Finder:
+   ```bash
+   mkdir -p ~/claude-code-job-search/profile/past-cvs && open ~/claude-code-job-search/profile/past-cvs
+   ```
+   A Finder window opens on an empty folder called `past-cvs`. Drag your old CV PDFs into it, then go back to the Terminal.
 
-Paste these three boxes one at a time. They always put the project in the same place, your home folder, so you can't lose it.
+> **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Open your **Downloads** folder in Finder and double-click the ZIP to unzip it. Go to the Terminal, type `cd` and a space (don't press Enter yet), then **drag the unzipped folder from Finder into the Terminal window** and press Enter. The Terminal fills in the folder's location for you. Then, instead of step 9, paste this box to make your CV folder and open it in Finder:
+> ```bash
+> mkdir -p profile/past-cvs && open profile/past-cvs
+> ```
+> Each time you come back, use this same `cd` and drag trick instead of the "Every time you come back" boxes.
 
-Go to your home folder:
-```bash
-cd ~
-```
-Download the project:
-```bash
-git clone https://github.com/nomanAliShah786/claude-code-job-search.git
-```
-Step into the project folder:
-```bash
-cd ~/claude-code-job-search
-```
+Done? Skip to [step 2](#2-start-claude-in-the-project-folder).
 
-**Check you're in the right place:** the line where you type should now end in `claude-code-job-search`. If it says "No such file or directory", the download didn't finish: paste the second box again.
+#### Windows
 
-To see the folder in Finder (Mac), press `Cmd + Shift + H`. On Windows it's in `C:\Users\<your name>`.
+1. **Open PowerShell.** Press the Windows key, type `PowerShell`, and press Enter. A blue or black window with a blinking cursor opens. Keep it open for every step below.
+2. **Install Git** (it downloads this project). Open [git-scm.com/download/win](https://git-scm.com/download/win) in your web browser and download the installer. Open it from your **Downloads** folder and click **Next** through every screen, keeping all the default options, then **Finish**.
+3. **Install Claude Code** (the AI assistant that does the work). You need a paid Claude account (Pro or Max) at [claude.ai](https://claude.ai). Copy this box, go back to PowerShell, right-click to paste it and press Enter:
+   ```powershell
+   irm https://claude.ai/install.ps1 | iex
+   ```
+   Wait until the cursor comes back. If you see an error, follow the [official setup guide](https://docs.claude.com/en/docs/claude-code/setup).
+4. **Install Node.js** (it runs the browser `/fetch-jobs` uses to read job sites). Open [nodejs.org](https://nodejs.org) in your web browser, click the **LTS** download button, open the downloaded file from your **Downloads** folder, and click **Next** through the installer with the default options.
+5. **Restart PowerShell.** Close its window with the **X**, then open it again as in step 1. This makes it see what you just installed.
+6. **Check it worked.** Copy this box, right-click to paste it into PowerShell and press Enter:
+   ```powershell
+   node --version
+   ```
+   You should see a version number such as `v22.x.x`. If you see "not recognized", go back to step 4.
+7. **Download the project.** Copy and paste these three boxes into PowerShell, one at a time, pressing Enter after each.
 
-> **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Unzip it, then in the Terminal type `cd` and a space (don't press Enter yet), **drag the unzipped folder into the Terminal window**, and press Enter. The Terminal fills in the folder's location for you. Even easier: delete the ZIP and use the three boxes above.
+   Go to your home folder:
+   ```powershell
+   cd ~
+   ```
+   Download the project there:
+   ```powershell
+   git clone https://github.com/nomanAliShah786/claude-code-job-search.git
+   ```
+   Step inside the project folder:
+   ```powershell
+   cd ~\claude-code-job-search
+   ```
+8. **Check you're in the right place.** Look at the line where the cursor blinks: it should now end in `claude-code-job-search>`. If you see "Cannot find path", the download didn't finish: paste the `git clone` box again.
+9. **Make a folder for your old CVs.** Paste this box into PowerShell and press Enter. It creates the folder and opens it in File Explorer:
+   ```powershell
+   mkdir -Force $HOME\claude-code-job-search\profile\past-cvs; explorer $HOME\claude-code-job-search\profile\past-cvs
+   ```
+   A File Explorer window opens on an empty folder called `past-cvs`. Drag your old CV PDFs into it, then go back to PowerShell.
 
-### 3. Start Claude in the project folder
+> **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Open your **Downloads** folder in File Explorer, right-click the ZIP and choose **Extract All**, then **Extract**. Go to PowerShell, type `cd` and a space (don't press Enter yet), then **drag the extracted folder from File Explorer into the PowerShell window** and press Enter. PowerShell fills in the folder's location for you. Then, instead of step 9, paste this box to make your CV folder and open it in File Explorer:
+> ```powershell
+> mkdir -Force profile\past-cvs; explorer profile\past-cvs
+> ```
+> Each time you come back, use this same `cd` and drag trick instead of the "Every time you come back" boxes.
 
-1. Paste:
+### 2. Start Claude in the project folder
+
+1. **Start Claude.** Copy this box, go to the Terminal (Mac) or PowerShell (Windows), paste it and press Enter:
    ```bash
    claude
    ```
-2. The first time, Claude opens your browser to sign in. Sign in with your Claude account, then go back to the Terminal.
-3. Claude asks whether you **trust the files in this folder**. Choose **Yes, proceed**. This gives Claude access to the project folder, and only that folder.
-4. When Claude asks permission to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
-5. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed (and IrishJobs.ie, Jobs.ie and Glassdoor in Ireland). Paste this inside Claude:
+2. **Sign in (first time only).** Your web browser opens a Claude sign-in page. Sign in with your Claude account, then go back to the Terminal or PowerShell window.
+3. **Trust the folder.** Claude asks whether you **trust the files in this folder**. Press the arrow keys to pick **Yes, proceed** and press Enter. This gives Claude access to the project folder, and only that folder.
+4. **Answer permission questions.** Whenever Claude asks to edit a file or run a command, read the short description and choose **Yes**. Choose the "don't ask again" option for things you're happy with.
+5. **Install the Playwright plugin (one time only).** It gives Claude a browser it can drive, which `/fetch-jobs` needs for Indeed (and IrishJobs.ie, Jobs.ie and Glassdoor in Ireland). Copy this box, paste it into Claude and press Enter:
    ```
    /plugin install playwright@claude-plugins-official
    ```
-   Confirm when asked, then type `/exit` and paste `claude` again so the plugin loads. To check it worked, type `/mcp`: **playwright** should be in the list. Prefer not to type commands? Just tell Claude: `Install the Playwright plugin for me.`
+   Confirm when asked. Then paste `/exit` and press Enter to close Claude, and paste `claude` and press Enter to start it again so the plugin loads. To check it worked, paste `/mcp` and press Enter: **playwright** should be in the list. Prefer not to? Just tell Claude: `Install the Playwright plugin for me.`
 
-To stop Claude, type `/exit` or press `Ctrl + C` twice.
+**To stop Claude**, type `/exit` and press Enter, or press `Ctrl + C` twice.
 
-**Every time you come back**, open a new Terminal and paste these two boxes, one at a time. They work from anywhere:
+**Every time you come back:** open the Terminal (Mac) or PowerShell (Windows) as in step 1 of your setup, then copy and paste these two boxes, one at a time, pressing Enter after each. They work no matter where the window starts:
 ```bash
 cd ~/claude-code-job-search
 ```
@@ -139,18 +191,34 @@ cd ~/claude-code-job-search
 claude
 ```
 
-### 4. Your first conversation
+### 3. Your first conversation
 
-You talk to Claude in plain English. Type these one at a time and press Enter:
+You talk to Claude in plain English. Copy each box below, paste it into Claude, press Enter, and wait for Claude to finish before the next one.
 
-1. `Install everything this project needs to build a CV on my computer.` Claude installs LaTeX, which turns the CV into a PDF. It's a large download and can take a while.
-2. `Set up my profile. My old CVs are in <folder>.` Put your old CV PDFs in a folder first, for example `profile/past-cvs/` inside the project. Claude reads them and creates your profile files, your `CLAUDE.local.md` and your own CV from `cv/master-template.example.tex`. It asks you questions where something is missing.
-3. `/fetch-jobs`, then `/rank-jobs`, to find and shortlist jobs.
-4. Type `/job-intake`, a space, then paste the job advert (or its web link) and press Enter. Then type `/tailor-cv` to get a CV tailored to that job.
+1. **Install the CV builder.** Claude installs LaTeX, which turns the CV into a PDF. It's a large download and can take a while.
+   ```
+   Install everything this project needs to build a CV on my computer.
+   ```
+2. **Set up your profile** from the old CVs you dragged into `past-cvs` in step 9. Claude reads them and creates your profile files, your `CLAUDE.local.md` and your own CV from `cv/master-template.example.tex`. It asks you questions where something is missing: type your answers and press Enter.
+   ```
+   Set up my profile. My old CVs are in profile/past-cvs.
+   ```
+3. **Find and shortlist jobs.** Paste the first box, wait for it to finish, then paste the second.
+   ```
+   /fetch-jobs
+   ```
+   ```
+   /rank-jobs
+   ```
+4. **Check a job and tailor your CV.** Open the job advert in your web browser and copy its text (or its web link). In Claude, type `/job-intake` and a space, paste the advert, and press Enter. When it finishes, paste this to get a CV tailored to that job:
+   ```
+   /tailor-cv
+   ```
+   Your new CV PDF is in the `cv/variants/` folder inside the project. To open that folder, ask Claude: `Open the folder with my tailored CV.`
 
 Your personal files stay on your computer. They're listed under "Personal data stays local" below and are never uploaded to GitHub.
 
-### 5. Lost? Just ask Claude in plain words
+### 4. Lost? Just ask Claude in plain words
 
 You don't need to remember any command. Talk to Claude the way you'd talk to a colleague. Start your message with **"Use the skills in this project"**, and Claude picks the right skills itself.
 
@@ -172,7 +240,7 @@ Something went wrong and I don't understand the error. Explain it simply and fix
 
 If an answer is confusing, say "explain that more simply" or "show me step by step". There are no silly questions. Even Peter Parker had to ask Tony how the suit worked.
 
-### 6. You're not limited to these skills: make your own
+### 5. You're not limited to these skills: make your own
 
 The skills here are a starting kit, not the whole suit. You can ask Claude to build new ones, just like Tony keeps adding suits to the lab:
 
@@ -192,7 +260,7 @@ Change the tailor-cv skill so it always mentions my AWS experience in the summar
 
 A good habit: when you catch yourself telling Claude the same thing twice ("always put my certifications last", "never use the word 'passionate'"), ask Claude to **turn it into a skill or a rule**. Then it remembers every time. That's how you go from giving instructions to having a system.
 
-### 7. Tips for the best results
+### 6. Tips for the best results
 
 - **One chat per job.** Start a fresh chat for each job application: type `/clear`, or `/exit` and run `claude` again. Your files, profile and skills carry over; only the conversation resets.
 - **Keep chats short.** Claude gets noticeably "dumber" as a chat gets long: it forgets early details, mixes up jobs and makes more mistakes. Hulk is strongest fresh, not after ten rounds. If a chat feels slow or confused, start a new one rather than arguing with it.
