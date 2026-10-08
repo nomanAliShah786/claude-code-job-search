@@ -76,8 +76,10 @@ How to copy and paste a command:
 
 ---
 
+#### Mac
+
 <details>
-<summary><h3>Mac: click here to open the steps</h3></summary>
+<summary><b>Click here to open the Mac steps</b></summary>
 
 <br>
 
@@ -135,8 +137,10 @@ How to copy and paste a command:
 
 ---
 
+#### Windows
+
 <details>
-<summary><h3>Windows: click here to open the steps</h3></summary>
+<summary><b>Click here to open the Windows steps</b></summary>
 
 <br>
 
