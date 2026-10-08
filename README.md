@@ -72,9 +72,16 @@ How to copy and paste a command:
 
 ### 1. Set up your computer (one time only)
 
-Follow only the part for your computer: **[Mac](#mac)** or **[Windows](#windows)**. Both end with the project downloaded to your home folder.
+**Pick your computer below and click it to open its steps.** Follow only that box and ignore the other one. Both end with the project downloaded to your home folder.
 
-#### Mac
+---
+
+<details>
+<summary><h3>Mac: click here to open the steps</h3></summary>
+
+<br>
+
+> You'll use the **Terminal**. Paste with `Cmd + V`.
 
 1. **Open the Terminal.** Press `Cmd + Space`, type `Terminal`, and press Enter. A window with a blinking cursor opens. Keep it open for every step below.
 2. **Install Git** (it downloads this project). Copy this box, go to the Terminal, paste it and press Enter:
@@ -115,15 +122,25 @@ Follow only the part for your computer: **[Mac](#mac)** or **[Windows](#windows)
    ```
    A Finder window opens on an empty folder called `past-cvs`. Drag your old CV PDFs into it, then go back to the Terminal.
 
+> [!TIP]
 > **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Open your **Downloads** folder in Finder and double-click the ZIP to unzip it. Go to the Terminal, type `cd` and a space (don't press Enter yet), then **drag the unzipped folder from Finder into the Terminal window** and press Enter. The Terminal fills in the folder's location for you. Then, instead of step 9, paste this box to make your CV folder and open it in Finder:
 > ```bash
 > mkdir -p profile/past-cvs && open profile/past-cvs
 > ```
 > Each time you come back, use this same `cd` and drag trick instead of the "Every time you come back" boxes.
 
-Done? Skip to [step 2](#2-start-claude-in-the-project-folder).
+**✅ Mac done.** Go to [step 2](#2-start-claude-in-the-project-folder).
 
-#### Windows
+</details>
+
+---
+
+<details>
+<summary><h3>Windows: click here to open the steps</h3></summary>
+
+<br>
+
+> You'll use **PowerShell**. Paste by right-clicking inside it.
 
 1. **Open PowerShell.** Press the Windows key, type `PowerShell`, and press Enter. A blue or black window with a blinking cursor opens. Keep it open for every step below.
 2. **Install Git** (it downloads this project). Open [git-scm.com/download/win](https://git-scm.com/download/win) in your web browser and download the installer. Open it from your **Downloads** folder and click **Next** through every screen, keeping all the default options, then **Finish**.
@@ -160,11 +177,18 @@ Done? Skip to [step 2](#2-start-claude-in-the-project-folder).
    ```
    A File Explorer window opens on an empty folder called `past-cvs`. Drag your old CV PDFs into it, then go back to PowerShell.
 
+> [!TIP]
 > **Downloaded the ZIP from GitHub instead?** That's where most people get lost. Open your **Downloads** folder in File Explorer, right-click the ZIP and choose **Extract All**, then **Extract**. Go to PowerShell, type `cd` and a space (don't press Enter yet), then **drag the extracted folder from File Explorer into the PowerShell window** and press Enter. PowerShell fills in the folder's location for you. Then, instead of step 9, paste this box to make your CV folder and open it in File Explorer:
 > ```powershell
 > mkdir -Force profile\past-cvs; explorer profile\past-cvs
 > ```
 > Each time you come back, use this same `cd` and drag trick instead of the "Every time you come back" boxes.
+
+**✅ Windows done.** Go to [step 2](#2-start-claude-in-the-project-folder).
+
+</details>
+
+---
 
 ### 2. Start Claude in the project folder
 
