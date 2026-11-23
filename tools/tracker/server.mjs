@@ -95,7 +95,9 @@ async function listAds() {
     return [slug, parseStatus(md).posting];
   }));
   const trackedSlug = (id) => postings.find(([, posting]) => posting.includes(id.slice(3)))?.[0] || null;
-  return [...ads.values()].map((ad) => {
+  // Only ads posted in the last 20 days; undated ads are dropped too.
+  const cutoff = new Date(Date.parse(today()) - 20 * 864e5).toISOString().slice(0, 10);
+  return [...ads.values()].filter((ad) => ad.date >= cutoff).map((ad) => {
     const s = scoreById[ad.id];
     return {
       id: ad.id, title: ad.title, company: ad.company, location: ad.location, date: ad.date || '', source: ad.source,

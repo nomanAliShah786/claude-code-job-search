@@ -8,7 +8,7 @@ async (page) => {
   const ROLE = S.titles ? new RegExp(S.titles, 'i') : /software\s+(engineer|developer|development\s+engineer)|full[\s-]?stack|\bSDE\b|\bSWE\b/i;
   const [DMIN, DMAX] = await store.evaluate(() => window.__delay || [1000, 3000]);
   const sleep = () => w.waitForTimeout(DMIN + Math.random() * (DMAX - DMIN));
-  const isBlocked = t => /just a moment|attention|verify|security|access denied|blocked/i.test(t);
+  const isBlocked = t => /just a moment|attention|verify|^security \| glassdoor|access denied|blocked/i.test(t);
   const closeModal = async () => {
     for (const sel of ['button[aria-label="Close"]', 'button.CloseButton', '[data-test="modal-close-btn"]', 'button[class*="CloseButton"]']) {
       const b = await w.$(sel).catch(() => null);
@@ -22,7 +22,7 @@ async (page) => {
     const kw = kws[qi];
     const need = await store.evaluate(([kw, re]) => { const R = new RegExp(re, 'i'); return Object.values(window.__gd).filter(c => c.queries.includes(kw) && R.test(c.title) && !window.__gdd[c.id]).map(c => c.id); }, [kw, ROLE.source]);
     if (!need.length) { qi++; await store.evaluate(q => { window.__gpq = q; }, qi); continue; }
-    const url = `https://www.glassdoor.ie/Job/ireland-${kw}-jobs-SRCH_IL.0,7_IN70_KO8,${8 + kw.length}.htm?fromAge=30`;
+    const url = `https://www.glassdoor.ie/Job/ireland-${kw}-jobs-SRCH_IL.0,7_IN70_KO8,${8 + kw.length}.htm?fromAge=${S.days || 30}`;
     if (!w.url().startsWith(url.split('?')[0])) {
       await w.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000}).catch(() => {});
       await w.waitForTimeout(3000);

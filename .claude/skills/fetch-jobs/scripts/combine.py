@@ -46,6 +46,13 @@ try:
 except FileNotFoundError:
     pass
 
+# Cpl (JobPosting JSON-LD; the ad URL is the key)
+for u, d in load(R + "cpl_ads.json").items():
+    if d.get("missing"):
+        continue
+    ads.append({"source": "Cpl", "id": "cpl-" + u.rstrip("/").split("/")[-1], "title": d["title"], "company": d["company"],
+                "location": d["location"].replace(", IE", ", Ireland") if d["location"] else "Ireland", "date": d.get("date", ""), "description": d["description"], "url": u})
+
 # RecruitIreland (text taken from the page, no structured data)
 for h, d in load(R + "recruitireland_ads.json").items():
     if d:
@@ -57,7 +64,8 @@ print("raw", collections.Counter(a["source"] for a in ads))
 # Northern Ireland is in the UK, so an Ireland search drops it. Other countries need no such filter.
 NI = re.compile(r"northern ireland|united kingdom|belfast|derry|londonderry|antrim|armagh|tyrone|fermanagh|newry|lisburn|\bGB\b|\bUK\b", re.I)
 ROLE = re.compile(TITLE_RE, re.I)
-JUNIOR = re.compile(r"\b(intern|internship|graduate|grad|student|apprentice|placement|summer)\b", re.I)
+# FETCH_KEEP_GRAD=1 keeps graduate and entry-level roles; internships, placements and student roles still go.
+JUNIOR = re.compile(r"\b(intern|internship|student|apprentice|placement|summer)\b" if os.environ.get("FETCH_KEEP_GRAD") else r"\b(intern|internship|graduate|grad|student|apprentice|placement|summer)\b", re.I)
 MGMT = re.compile(r"\b(manager|director|head of|vice president|VP|chief)\b", re.I)
 NOT_SW = re.compile(r"\b(recruit|sales|account executive|mechanical|electrical|PLC|SCADA)\b", re.I)
 
@@ -98,7 +106,7 @@ for a in ads:
     kept.append(a)
 
 # Cross-source and repost dedupe: same company and >= 60% word overlap in the description.
-PRIORITY = {"LinkedIn": 0, "Indeed": 1, "IrishJobs.ie": 2, "Jobs.ie": 3, "Glassdoor": 4, "RecruitIreland": 5}
+PRIORITY = {"LinkedIn": 0, "Indeed": 1, "IrishJobs.ie": 2, "Jobs.ie": 3, "Glassdoor": 4, "Cpl": 5, "RecruitIreland": 6}
 kept.sort(key=lambda a: (PRIORITY.get(a["source"], 9), -len(a["description"])))
 by_co = collections.defaultdict(list)
 final = []

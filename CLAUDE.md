@@ -8,6 +8,8 @@ Work as a senior HR recruiter with 20+ years of experience and deep expertise in
 - `profile/past-cvs/`: the candidate's previous CVs (PDF). Source of truth for experience, achievements, tone, and metrics.
 - `profile/evidence.md`: achievements extracted from past CVs and conversation, each with a stable ID (`E-ACME-01`) and a source, plus education and the skills listed on the initial CV.
 - `profile/stories.md`: STAR interview answers citing evidence IDs.
+- `profile/stories-mini.md`: 2-minute spoken versions of each story, keeping every metric; update it whenever `stories.md` changes.
+- `profile/glossary.md`: plain-language explanations of the technical terms used in the stories and interview prep packs.
 - `profile/job-preferences.md`: deal-breakers (work authorisation, locations, languages, seniority) checked by `/rank-jobs`.
 - `profile/certifications.md`: targets, progress, and certificates held.
 - `cv/master-template.tex`: the **master template**. The candidate's own CV layout with the full Key Skills list; the formatting source for every CV, and the file every variant is copied from. It is gitignored; `cv/master-template.example.tex` is the public copy with identical formatting and placeholder content.
@@ -181,9 +183,9 @@ Bolding guides the eye to the two or three things per section that prove the can
 - Application stages: `intake` → `drafted` → `applied` → `screen` → `onsite` → `offer` | `rejected` | `withdrawn` | `no-response`.
 
 ## Skills
-- `/fetch-jobs [--country] [--location] [--roles] [--sites] [--interval MIN-MAX]` collects the last 30 days of ads for any country from LinkedIn and Indeed (plus IrishJobs.ie, Jobs.ie and Glassdoor in Ireland) into `research/<date>-<country>-jobs/combined.jsonl` for `/rank-jobs`.
+- `/fetch-jobs [--country] [--location] [--roles] [--sites] [--days N] [--interval MIN-MAX]` (runs on Haiku) collects the last N days (default 30) of ads for any country from LinkedIn and Indeed (plus IrishJobs.ie, Jobs.ie, Glassdoor and Cpl in Ireland) into `research/<date>-<country>-jobs/combined.jsonl` for `/rank-jobs`.
 - `/job-intake <JD text or URL>` scaffolds `jobs/<slug>/` and writes the gap analysis.
-- `/rank-jobs [ads file | URLs]` scores saved ads or new postings against the profile and returns a ranked shortlist for `/job-intake`.
+- `/rank-jobs [ads file | URLs]` scores saved ads or new postings against the profile (Sonnet agents, ~25 ads each, other-stack titles filtered first; entry-level and graduate roles included) and returns a ranked shortlist for `/job-intake`.
 - `/tailor-cv <job slug>` builds the tailored CV variant and runs the checklist.
 - `/cover-letter <job slug>` drafts the cover letter, then a fresh reviewer agent critiques the CV and letter.
 - `/ats-score [job slug] [CV]` scores a CV out of 100 against a job on six research-backed ATS factors, compares it with the master, and lists evidence-backed fixes.

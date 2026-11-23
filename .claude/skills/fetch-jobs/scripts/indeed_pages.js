@@ -24,7 +24,7 @@ async (page) => {
   };
   while (qi < qs.length && done < 25) {
     const q = qs[qi];
-    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(loc)}&fromage=30&start=${start}`;
+    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(loc)}&fromage=${S.days || 30}&start=${start}`;
     try { await w.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000}); }
     catch (e) { blocked = 'goto error: ' + String(e).slice(0, 100); break; }
     let title = await w.title().catch(() => '');

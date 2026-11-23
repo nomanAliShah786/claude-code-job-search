@@ -19,8 +19,8 @@ async (page) => {
   while (cursor < combos.length && done < 40) {
     const [q, l, v] = combos[cursor];
     if (skip[q + '|' + l]) { cursor++; continue; }
-    // fromage=30 unless the variant sets its own window
-    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(l)}${v.includes('fromage') ? '' : '&fromage=30'}${v}`;
+    // fromage=days (default 30) unless the variant sets its own window
+    const url = `https://${host}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(l)}${v.includes('fromage') ? '' : `&fromage=${S.days || 30}`}${v}`;
     try {
       await w.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000});
     } catch (e) { blocked = 'goto error: ' + String(e).slice(0, 100); break; }
